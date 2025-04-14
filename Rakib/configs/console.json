@@ -1,0 +1,28 @@
+{
+  "note": "config the console output and loaders here!",
+  "console": {
+    "success": "green",
+    "error": "red",
+    "warn": "blue",
+    "available": "blue, red, yellow, white, green, blueBright",
+    "editNames": {
+      "success": "Rakib",
+      "error": "error",
+      "warn": "warn"
+    }
+  },
+  "logger": {
+    "colors": {
+      "cmdStarter": "yellow",
+      "evntStarter": "blue",
+      "cmdLoader": "red",
+      "evntLoader": "green"
+    },
+    "strings": {
+      "cmdStarter": "DEPLOYING ALL SYSTEM COMMANDS",
+      "evntStarter": "DEPLOYING ALL SYSTEM EVENTS",
+      "cmdLoader": "command",
+      "evntLoader": "event"
+    }
+  }
+}

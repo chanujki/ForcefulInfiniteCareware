@@ -1,0 +1,8 @@
+{
+  "Rakibdev": "https://main.Rakibdev.repl.co",
+  "talk": "https://api.Rakibdev.repl.co/talk/get/",
+  "teach": "https://api.Rakibdev.repl.co/talk/add/",
+  "biblesearch": "https://bible-api.com/",
+  "weather": "https://api.openweathermap.org/data/2.5/weather?q=",
+  "sensui": "https://sensui-useless-apis.codersensui.repl.co/"
+}

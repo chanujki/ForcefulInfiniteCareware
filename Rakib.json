@@ -1,0 +1,19 @@
+{
+  "author": "Rakib",
+  "developermode": false,
+  "language": "en",
+  "notification": true,
+  "approval": false,
+  "premium": false,
+  "BOTNAME": "𝐑𝐀𝐊𝐈𝐁-𝐁𝐎𝐓-𝟎𝟎𝟕🤖",
+  "PREFIX": "/",
+  "OPERATOR": [
+    "100025013732141"
+  ],
+  "ADMINBOT": [
+    "100025013732141"
+  ],
+  "disabledcmds": [],
+  "disabledevents": [],
+  "note": "make sure that the bot name you entered is all lowercase"
+}
