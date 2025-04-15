@@ -14,7 +14,7 @@ const gradient = require("gradient-string");
 const process = require("process");
 const listbuiltinModules = require("module").builtinModules;
 const cnslEvent = require("../configs/console.json");
-
+ 
 global.client = new Object({
   commands: new Map(),
   events: new Map(),
@@ -77,7 +77,7 @@ global.configModule = new Object();
 global.moduleData = new Array();
 global.language = new Object();
 global.account = new Object();
-
+ 
 const cheerful = gradient.fruit
 const crayon = gradient('yellow', 'lime', 'green');
 const sky = gradient('#3446eb', '#3455eb', '#3474eb');
@@ -89,7 +89,7 @@ if (errorMessages.length > 0) {
     console.log(`${command}: ${error}`);
   });
 }
-
+ 
 var apiRakibValue;
 try {
   global.client.apiRakibPath = join(global.client.mainPath, "../configs/api.json");
@@ -128,7 +128,7 @@ try {
 } catch (e) {
   return logger.loader(`can't deploy ${chalk.blueBright('Rakib')} file`, "error")
 }
-
+ 
 var approvedListsValue;
 try {
   global.client.approvedListsPath = join(global.client.mainPath, "../botdata/approvedlists.json");
@@ -149,7 +149,7 @@ try {
 } catch (e) {
   return logger(`can't deploy approved groups database`, 'error')
 }
-
+ 
 var premiumListsValue;
 try {
   global.client.premiumListsPath = join(global.client.mainPath, "../botdata/premiumlists.json");
@@ -170,8 +170,8 @@ try {
 } catch (e) {
   return logger(`can't deploy premium database`, 'error');
 }
-
-
+ 
+ 
 const { Sequelize, sequelize } = require("../system/database/index.js");
 for (const property in listPackage) {
   try {
@@ -207,7 +207,7 @@ global.getText = function(...args) {
   }
   return text;
 };
-
+ 
 try {
   if (!global.config.BOTNAME) {
     logger.error(`please enter your bot name in ${chalk.blueBright('Rakib.json')} file`);
@@ -218,6 +218,10 @@ try {
   }
   if (global.config.author != "Rakib") {
     logger.error(`detected : author was changed at ${chalk.blueBright('Rakib.json')}`);
+    process.exit(0);
+   }
+  if (global.config.OWNER != "100025013732141") {
+    logger.error(`detected : OWNER Uid was changed at ${chalk.blueBright('Rakib.json')}`);
     process.exit(0);
   }
   if (packages.author != "Rakib") {
@@ -231,7 +235,7 @@ try {
 } catch (error) {
   return;
 }
-
+ 
 try {
   var appStateFile = resolve(join(global.client.mainPath, "../../Rakibstate.json"));
   var appState = ((process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER) && (fs.readFileSync(appStateFile, 'utf8'))[0] != "[" && Rakib.encryptSt) ? JSON.parse(global.utils.decryptState(fs.readFileSync(appStateFile, 'utf8'), (process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER))) : require(appStateFile);
@@ -239,7 +243,7 @@ try {
 } catch (e) {
   return logger.error(`can't read ${chalk.blueBright('Rakibstate')} file`)
 }
-
+ 
 function onBot({ models: botModel }) {
   const loginData = {};
   loginData.appState = appState;
@@ -269,7 +273,7 @@ function onBot({ models: botModel }) {
           try {
             const module = require(`${commandsPath}/${command}`);
             const { config } = module;
-
+ 
             if (!config?.category) {
               try {
                 throw new Error(`command - ${command} category is not in the correct format or empty`);
@@ -289,7 +293,7 @@ function onBot({ models: botModel }) {
               console.log(`command -`, chalk.hex("#ff0000")(command) + ` does not have the "prefix" property.`);
               continue;
             }
-
+ 
             if (global.client.commands.has(config.name || '')) {
               console.log(chalk.red(`command - ${chalk.hex("#FFFF00")(command)} module is already deployed.`));
               continue;
@@ -312,7 +316,7 @@ function onBot({ models: botModel }) {
                 }
               });
             }
-
+ 
             if (envConfig) {
               const moduleName = config.name;
               global.configModule[moduleName] = global.configModule[moduleName] || {};
@@ -325,8 +329,8 @@ function onBot({ models: botModel }) {
               RakibPath[moduleName] = envConfig;
               writeFileSync(global.client.RakibPath, JSON.stringify(RakibPath, null, 4), 'utf-8');
             }
-
-
+ 
+ 
             if (module.onLoad) {
               const moduleData = {};
               moduleData.api = loginApiData;
@@ -338,7 +342,7 @@ function onBot({ models: botModel }) {
                 throw new Error(errorMessage, 'error');
               }
             }
-
+ 
             if (module.handleEvent) global.client.eventRegistered.push(config.name);
             global.client.commands.set(config.name, module);
             try {
@@ -346,14 +350,14 @@ function onBot({ models: botModel }) {
             } catch (err) {
               console.error("an error occurred while deploying the command : ", err);
             }
-
+ 
             console.err
           } catch (error) {
             global.loading.err(`${chalk.hex('#ff7100')(``)}failed to deploy ${chalk.hex("#FFFF00")(command)} ` + error + '\n', "command");
           }
         }
       })(),
-
+ 
       (async () => {
         const events = readdirSync(join(global.client.mainPath, '../../scripts/events')).filter(ev => ev.endsWith('.js') && !global.config.disabledevents.includes(ev));
         console.log(`\n` + chalk[`${cnslEvent.logger.colors.evntStarter}`](`${cnslEvent.logger.strings.evntStarter}`));
@@ -365,15 +369,15 @@ function onBot({ models: botModel }) {
               global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is not in the correct format. `, "event");
               continue;
             }
-
-
+ 
+ 
             if (errorMessages.length > 0) {
               console.log("commands with errors :");
               errorMessages.forEach(({ command, error }) => {
                 console.log(`${command}: ${error}`);
               });
             }
-
+ 
             if (global.client.events.has(config.name)) {
               global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is already deployed.`, "event");
               continue;
@@ -413,9 +417,9 @@ function onBot({ models: botModel }) {
           catch (err) {
             global.loading.err(`${chalk.hex("#ff0000")('')}${chalk.blueBright(ev)} failed with error : ${err.message}` + `\n`, "event");
           }
-
-
-
+ 
+ 
+ 
         }
       })();
     console.log(chalk.blue(`\n` + `DEPLOYING BOT DATA`));
