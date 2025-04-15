@@ -1,19 +1,27 @@
 {
   "author": "Rakib",
+  "autoRestart": true,
+  "accpetPending": false,
   "developermode": false,
   "language": "en",
-  "notification": true,
+  "notification": false,
   "approval": false,
   "premium": false,
-  "BOTNAME": "𝐑𝐀𝐊𝐈𝐁-𝐁𝐎𝐓-𝟎𝟎𝟕🤖",
+  "saveState": false,
+  "BOTNAME": "𝐑𝐀𝐊𝐈𝐁-𝐁𝐎𝐓___//𝟎𝟎𝟕🤖",
   "PREFIX": "/",
   "OPERATOR": [
-    "100025013732141"
+    "100025013732141",
+    ""
   ],
   "ADMINBOT": [
     "100025013732141"
   ],
+  "OWNER": ["100025013732141"], 
+  "APPROVED": ["100025013732141"],
   "disabledcmds": [],
   "disabledevents": [],
-  "note": "make sure that the bot name you entered is all lowercase"
+  "note": "make sure that the bot name you entered is all lowercase",
+  "notice": "dont cng author name and owner uid. otherwise bot not working",
+  "notice2": "if you run use email and password, use saveState false; otherwise, use saveState true"
 }
