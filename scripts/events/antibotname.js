@@ -5,7 +5,7 @@ module.exports.config = {
   credits: "Nayan",
   description: "Prevent changing the Bot's nickname"
 };
-
+ 
 module.exports.run = async function({ api, event, Users, Threads }) {
     var { logMessageData, threadID, author } = event;
     var botID = api.getCurrentUserID();
