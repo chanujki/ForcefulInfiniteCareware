@@ -46,13 +46,61 @@ module.exports = {
  
     // Check if the user is an admin or bot admin
     const threadInfo = await nayan.getThreadInfo(threadID);
+const fs = require("fs-extra");
+const path = require("path");
+ 
+const activeGroupsFilePath = path.join(__dirname, "..", "events", "Rakib", "groupSettings.json");
+ 
+let activeGroups = {};
+if (fs.existsSync(activeGroupsFilePath)) {
+  try {
+    const fileData = fs.readFileSync(activeGroupsFilePath, "utf-8");
+    activeGroups = JSON.parse(fileData);
+ 
+    if (typeof activeGroups !== "object") {
+      console.warn("activeGroups data is not an object. Initializing to empty object.");
+      activeGroups = {};
+    }
+  } catch (error) {
+    console.error("Error loading active groups:", error);
+  }
+}
+ 
+const saveActiveGroups = () => {
+  try {
+    fs.writeFileSync(activeGroupsFilePath, JSON.stringify(activeGroups, null, 2), "utf-8");
+  } catch (error) {
+    console.error("Error saving active groups:", error);
+  }
+};
+ 
+module.exports = {
+  config: {
+    name: "antichange",
+    version: "1.0.0",
+    permission: 0,
+    credits: "Rakib",
+    description: "Prevents unauthorized group changes",
+    prefix: false,
+    category: "box",
+    usages: "antichange [on/off]",
+    cooldowns: 5,
+  },
+ 
+  start: async function ({ Rakib, events, args, Threads }) {
+    const threadID = events.threadID;
+    const senderID = events.senderID;
+    const botAdmins = global.config.ADMINBOT;
+ 
+    // Check if the user is an admin or bot admin
+    const threadInfo = await Rakib.getThreadInfo(threadID);
     const groupAdmins = threadInfo.adminIDs.map(admin => admin.id);
  
     if (!groupAdmins.includes(senderID) && !botAdmins.includes(senderID)) {
-      return nayan.sendMessage("⚠️ Only group admins or bot admins can use this command.", threadID);
+      return Rakib.sendMessage("⚠️ Only group admins or bot admins can use this command.", threadID);
     }
  
-    const initialThreadInfo = await nayan.getThreadInfo(threadID);
+    const initialThreadInfo = await Rakib.getThreadInfo(threadID);
     const initialGroupName = initialThreadInfo.threadName;
     const initialGroupImage = initialThreadInfo.imageSrc || "";
  
@@ -70,21 +118,21 @@ module.exports = {
  
         await setData(threadID, { threadInfo: dataThread });
         saveActiveGroups();
-        nayan.sendMessage("✅ Anti-change feature has been activated for this group.", threadID);
+        Rakib.sendMessage("✅ Anti-change feature has been activated for this group.", threadID);
       } else {
-        nayan.sendMessage("⚠️ Anti-change feature is already active for this group.", threadID);
+        Rakib.sendMessage("⚠️ Anti-change feature is already active for this group.", threadID);
       }
     } else if (args[0] === "off") {
       if (activeGroups[threadID]) {
         delete activeGroups[threadID];
         await delData(threadID);
         saveActiveGroups();
-        nayan.sendMessage("🚫 Anti-change feature has been deactivated for this group.", threadID);
+        Rakib.sendMessage("🚫 Anti-change feature has been deactivated for this group.", threadID);
       } else {
-        nayan.sendMessage("⚠️ Anti-change feature is not active for this group.", threadID);
+        Rakib.sendMessage("⚠️ Anti-change feature is not active for this group.", threadID);
       }
     } else {
-      nayan.sendMessage("⚠️ Invalid option. Please use 'antichange on' or 'antichange off'.", threadID);
+      Rakib.sendMessage("⚠️ Invalid option. Please use 'antichange on' or 'antichange off'.", threadID);
     }
   }
 };
