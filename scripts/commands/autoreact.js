@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const pathFile = __dirname + '/autoreact/autoreact.txt';
-
+ 
 module.exports = {
 config: {
   name: "autoreact",
@@ -18,7 +18,7 @@ config: {
     "axios": ""
   }
 },
-
+ 
   languages: {
   "vi": {},
       "en": {
@@ -27,37 +27,37 @@ config: {
         "error": 'incorrect syntax'
       }
   },
-
+ 
 handleEvent: async ({ api, event, Threads }) => {
-
+ 
   if (!fs.existsSync(pathFile))
    fs.writeFileSync(pathFile, 'false');
    const isEnable = fs.readFileSync(pathFile, 'utf-8');
    if (isEnable == 'true') {
-
+ 
   const reactions = ["💀", "🙄", "🤭","🥺","😶","😝","👿","🤓","🥶","🗿","😾","🤪","🤬","🤫","😼","😶‍🌫️","😎","🤦","💅","👀","☠️","🧠","👺","🤡","🤒","🤧","😫","😇","🥳","😭"];
-  var nayan = reactions[Math.floor(Math.random() * reactions.length)];
-
-  api.setMessageReaction(nayan, event.messageID, (err) => {
+  var Rakib = reactions[Math.floor(Math.random() * reactions.length)];
+ 
+  api.setMessageReaction(Rakib, event.messageID, (err) => {
     if (err) {
       console.error("Error sending reaction:", err);
     }
   }, true);
 }
 },
-
-start: async ({ nayan, events, args, lang }) => {
+ 
+start: async ({ Rakib, events, args, lang }) => {
    try {
-
+ 
      const logger = require("../../Rakib/catalogs/Rakibc.js");
      if (args[0] == 'on') {
        fs.writeFileSync(pathFile, 'true');
-       nayan.sendMessage(lang("on"), events.threadID, events.messageID);
+       Rakib.sendMessage(lang("on"), events.threadID, events.messageID);
      } else if (args[0] == 'off') {
        fs.writeFileSync(pathFile, 'false');
-       nayan.sendMessage(lang("off"), events.threadID, events.messageID);
+       Rakib.sendMessage(lang("off"), events.threadID, events.messageID);
      } else {
-       nayan.sendMessage(lang("error"), events.threadID, events.messageID);
+       Rakib.sendMessage(lang("error"), events.threadID, events.messageID);
      }
    }
    catch(e) {
@@ -65,3 +65,4 @@ start: async ({ nayan, events, args, lang }) => {
    }
 }
 }
+ 
