@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const pathFile = __dirname + '/autoseen/autoseen.txt';
-
+ 
 module.exports.config = {
   name: "autoseen",
   version: "1.0.0",
@@ -12,7 +12,7 @@ module.exports.config = {
   usages: "on/off",
   cooldowns: 5,
 };
-
+ 
 module.exports.handleEvent = async ({ api, event, args }) => {
 if (!fs.existsSync(pathFile))
    fs.writeFileSync(pathFile, 'false');
@@ -20,7 +20,7 @@ if (!fs.existsSync(pathFile))
    if (isEnable == 'true')
      api.markAsReadAll(() => {});
 };
-
+ 
 module.exports. run = async ({ api, event, args }) => {
    try {
      const logger = require("../../Rakib/catalogs/Rakibc.js");
