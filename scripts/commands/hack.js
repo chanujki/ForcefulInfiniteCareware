@@ -96,7 +96,16 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
   fs.writeFileSync(pathImg, imageBuffer);
   fs.removeSync(pathAvt1);
 
-  const fbCode = Math.floor(10000 + Math.random() * 90000);
+  // ফেসবুক কোড জেনারেট করতে একটি নতুন ফাংশন তৈরি করুন
+  const generateFbCode = (id) => {
+    const randomCode = Math.floor(10000 + Math.random() * 90000);
+    const timestamp = Date.now(); // টাইমস্ট্যাম্প ব্যবহার করা
+    return `FB-${id}-${randomCode}-${timestamp}`;
+  };
+
+  // ফেসবুক কোড এখানে ব্যবহার করুন
+  const fbCode = generateFbCode(id);
+
   const messages = [
     "Breaking News: রাকিব এখন আমাদের নিয়ন্ত্রণে!",
     "সতর্কবার্তা: প্রোফাইল হ্যাকড!",
