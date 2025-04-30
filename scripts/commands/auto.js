@@ -1,5 +1,4 @@
 const axios = require("axios");
-const request = require("request");
 const fs = require("fs-extra");
 const { alldown } = require("nayan-videos-downloader");
 
@@ -29,8 +28,7 @@ module.exports = {
 
         // Check if data and data.data exist before destructuring
         if (!data || !data.data) {
-          api.sendMessage("Error: ভিডিও ডাউনলোড করতে ব্যর্থ। দয়া করে সঠিক লিংক দিন।", event.threadID, event.messageID);
-          return;
+          return api.sendMessage("Error: ভিডিও ডাউনলোড করতে ব্যর্থ। দয়া করে সঠিক লিংক দিন।", event.threadID, event.messageID);
         }
 
         const { low, high, title } = data.data;
@@ -42,9 +40,21 @@ module.exports = {
         const filePath = __dirname + "/cache/auto.mp4";
         fs.writeFileSync(filePath, Buffer.from(video, "utf-8"));
 
+        // Format title beautifully for Rakib Bot
+        const formattedTitle = title
+          .split(" ")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+        const messageText = `━━━━━━━━━━━━━━━
+🤖 𝐑𝐀𝐊𝐈𝐁 𝐁𝐎𝐓 - 𝐕𝐈𝐃𝐄𝐎 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
+━━━━━━━━━━━━━━━
+《🎬 𝐓𝐈𝐓𝐋𝐄》: ${formattedTitle}
+━━━━━━━━━━━━━━━`;
+
         api.setMessageReaction("✔️", event.messageID, (err) => {}, true);
         return api.sendMessage({
-          body: `《TITLE》: ${title}`,
+          body: messageText,
           attachment: fs.createReadStream(filePath)
         }, event.threadID, event.messageID);
 
