@@ -121,4 +121,3 @@ body: ${msg},
 attachment: fs.createReadStream(pathImg)
 }, event.threadID, () => fs.unlinkSync(pathImg), event.messageID);
 }
-
