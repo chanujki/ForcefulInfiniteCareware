@@ -1,24 +1,25 @@
 module.exports.config = {
-  name: "hack",
-  version: "1.0.0",
+  name: "hack", 
+  version: "1.0.0", 
   permission: 0,
   credits: "Rakib",
   description: "example",
   prefix: true,
-  category: "Fun",
-  usages: "user",
+  category: "Fun", 
+  usages: "user", 
   cooldowns: 5,
   dependencies: {
     "axios": "",
-    "fs-extra": ""
+    "fs-extra": "",
+    "canvas": ""
   }
 };
 
-module.exports.wrapText = (ctx, name, maxWidth) => {
+module.exports.wrapText = (ctx, text, maxWidth) => {
   return new Promise(resolve => {
-    if (ctx.measureText(name).width < maxWidth) return resolve([name]);
-    if (ctx.measureText('Wy').width > maxWidth) return resolve(null);
-    const words = name.split(' ');
+    if (ctx.measureText(text).width < maxWidth) return resolve([text]);
+    if (ctx.measureText('W').width > maxWidth) return resolve(null);
+    const words = text.split(' ');
     const lines = [];
     let line = '';
     while (words.length > 0) {
@@ -44,81 +45,70 @@ module.exports.wrapText = (ctx, name, maxWidth) => {
 }
 
 module.exports.run = async function ({ args, Users, Threads, api, event, Currencies }) {
-  const { loadImage, createCanvas } = require("canvas");
+  const { loadImage, createCanvas, registerFont } = require("canvas");
   const fs = global.nodemodule["fs-extra"];
   const axios = global.nodemodule["axios"];
+
+  const fontPath = __dirname + "/fonts/Siyamrupali.ttf";
+  registerFont(fontPath, { family: "Siyamrupali" });
+
   let pathImg = __dirname + "/cache/background.png";
   let pathAvt1 = __dirname + "/cache/Avtmot.png";
 
   var id = Object.keys(event.mentions)[0] || event.senderID;
   var name = await Users.getNameUser(id);
 
-  var background = [
+  const backgrounds = [
     "https://drive.google.com/uc?id=1RwJnJTzUmwOmP3N_mZzxtp63wbvt9bLZ"
   ];
-  var rd = background[Math.floor(Math.random() * background.length)];
+  const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 
-  let getAvtmot = (
+  const avatar = (
     await axios.get(
       `https://graph.facebook.com/${id}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
       { responseType: "arraybuffer" }
     )
   ).data;
-  fs.writeFileSync(pathAvt1, Buffer.from(getAvtmot, "utf-8"));
+  fs.writeFileSync(pathAvt1, Buffer.from(avatar, "utf-8"));
 
-  let getbackground = (
-    await axios.get(`${rd}`, {
-      responseType: "arraybuffer",
-    })
+  const background = (
+    await axios.get(bg, { responseType: "arraybuffer" })
   ).data;
-  fs.writeFileSync(pathImg, Buffer.from(getbackground, "utf-8"));
+  fs.writeFileSync(pathImg, Buffer.from(background, "utf-8"));
 
-  let baseImage = await loadImage(pathImg);
-  let baseAvt1 = await loadImage(pathAvt1);
+  const baseImage = await loadImage(pathImg);
+  const baseAvt1 = await loadImage(pathAvt1);
 
-  let canvas = createCanvas(baseImage.width, baseImage.height);
-  let ctx = canvas.getContext("2d");
+  const canvas = createCanvas(baseImage.width, baseImage.height);
+  const ctx = canvas.getContext("2d");
   ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-  ctx.font = "400 23px Arial";
+
+  ctx.font = "23px Siyamrupali";
   ctx.fillStyle = "#1878F3";
   ctx.textAlign = "start";
 
   const lines = await this.wrapText(ctx, name, 1160);
   ctx.fillText(lines.join('\n'), 200, 497);
-  ctx.beginPath();
+
   ctx.drawImage(baseAvt1, 83, 437, 100, 101);
 
   const imageBuffer = canvas.toBuffer();
   fs.writeFileSync(pathImg, imageBuffer);
   fs.removeSync(pathAvt1);
 
-  const funnyReplies = [
-    "বস রাকিব, তোমার একাউন্ট এখন আমার দখলে!",
-    "রাকিব ভাই, হ্যাক সম্পন্ন হয়েছে... পাসওয়ার্ড এখন আমার কাছে!",
-    "Breaking News: রাকিব এখন আমাদের নিয়ন্ত্রণে!",
-    "সতর্কবার্তা: রাকিবের প্রোফাইল এখন হ্যাক মুডে!",
-    "ভাই রাকিব, আপনার ফটো এখন AI দ্বারা বদলে গেছে!",
-    "রাকিব বস, মেশিন বলতেছে আপনি এখন ভিক্টিম 007!",
-    "হ্যাক শেষ, এখন চায়ের দাম দিবেন রাকিব ভাই!",
-    "রাকিব ভাই, আপনার একাউন্টে এখন শুধু কফি-মিম চলে!",
-    "Congratulations রাকিব! আপনি এখন হ্যাকারদের রাজা!",
-    "রাকিব ভাই, Security Level: মজা সর্বোচ্চ!",
-    "এই মাত্র রাকিবের একাউন্টে ঢুকে নুডুলস অর্ডার করলাম!",
-    "AI বলছে: 'রাকিব ভাই এখন Safe না Fun Zone এ আছেন!'",
-    "রাকিব বস, প্রোফাইল পিকচার এখন জাদুকরী মোডে!",
-    "সাইবার পুলিশ বলেছে: 'এটা শুধু মজা, ভয় নাই রাকিব ভাই!'",
-    "বস রাকিব, আপনার ডেটা এখন আমার কফি মেশিনে!",
-    "চিন্তা নাই, আপনার মেসেজ গুলো এখন শুধু হাসি হাসি!",
-    "আপনার ফেসবুক এখন Netflix স্টাইল এ চলছে, বস!"
-  ];
-
-  const randomReply = funnyReplies[Math.floor(Math.random() * funnyReplies.length)];
   const fbCode = Math.floor(10000 + Math.random() * 90000);
+  const messages = [
+    "Breaking News: রাকিব এখন আমাদের নিয়ন্ত্রণে!",
+    "সতর্কবার্তা: প্রোফাইল হ্যাকড!",
+    "ভাই, ফটো এখন AI দ্বারা সম্পাদিত!",
+    "রাকিব বস, এখন আপনি হ্যাকারদের রাজা!",
+    "হ্যাক শেষ, এখন এক কাপ চা দেন!",
+    "ফেসবুক কোড: " + fbCode
+  ];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
 
   return api.sendMessage({
-    body: `${randomReply}\n\nFB Code: ${fbCode}`,
+    body: `${msg}`,
     attachment: fs.createReadStream(pathImg)
-  }, event.threadID,
-    () => fs.unlinkSync(pathImg),
-    event.messageID);
+  }, event.threadID, () => fs.unlinkSync(pathImg), event.messageID);
 }
