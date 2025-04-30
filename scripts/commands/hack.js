@@ -1,3 +1,8 @@
+const fs = require("fs-extra");
+const axios = require("axios");
+const { loadImage, createCanvas, registerFont } = require("canvas");
+const path = require("path");
+
 module.exports.config = {
   name: "hack",
   version: "1.0.0",
@@ -8,16 +13,21 @@ module.exports.config = {
   category: "Fun",
   usages: "user",
   cooldowns: 5,
-  dependencies: {
-    "axios": "",
-    "fs-extra": ""
-  }
+  dependencies: { "axios": "", "fs-extra": "" }
 };
+
+// Safe font register
+const fontPath = path.join(__dirname, "cache", "Siyamrupali.ttf");
+if (fs.existsSync(fontPath)) {
+  registerFont(fontPath, { family: "Siyamrupali" });
+} else {
+  console.warn("Siyamrupali.ttf not found! Using default font.");
+}
 
 module.exports.wrapText = (ctx, text, maxWidth) => {
   return new Promise(resolve => {
     if (ctx.measureText(text).width < maxWidth) return resolve([text]);
-    if (ctx.measureText('Wy').width > maxWidth) return resolve(null);
+    if (ctx.measureText('W').width > maxWidth) return resolve(null);
 
     const words = text.split(' ');
     const lines = [];
@@ -29,17 +39,15 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
       while (ctx.measureText(words[0]).width >= maxWidth) {
         const temp = words[0];
         words[0] = temp.slice(0, -1);
-
-        if (split) {
-          words[1] = `${temp.slice(-1)}${words[1]}`;
-        } else {
+        if (split) words[1] = temp.slice(-1) + words[1];
+        else {
           split = true;
           words.splice(1, 0, temp.slice(-1));
         }
       }
 
-      if (ctx.measureText(`${line}${words[0]}`).width < maxWidth) {
-        line += `${words.shift()} `;
+      if (ctx.measureText(line + words[0]).width < maxWidth) {
+        line += words.shift() + " ";
       } else {
         lines.push(line.trim());
         line = '';
@@ -50,17 +58,9 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
 
     return resolve(lines);
   });
-};
+}
 
 module.exports.run = async function ({ args, Users, Threads, api, event, Currencies }) {
-  const { loadImage, createCanvas, registerFont } = require("canvas");
-  const fs = global.nodemodule["fs-extra"];
-  const axios = global.nodemodule["axios"];
-
-  registerFont(__dirname + "/cache/Siyamrupali.ttf", {
-    family: "Siyamrupali"
-  });
-
   let pathImg = __dirname + "/cache/background.png";
   let pathAvt1 = __dirname + "/cache/Avtmot.png";
 
@@ -89,7 +89,6 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
 
   let canvas = createCanvas(baseImage.width, baseImage.height);
   let ctx = canvas.getContext("2d");
-
   ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
   ctx.font = "23px Siyamrupali";
@@ -99,7 +98,6 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
 
   const lines = await this.wrapText(ctx, name, 1160);
   ctx.fillText(lines.join('\n'), 200, 497);
-
   ctx.beginPath();
   ctx.drawImage(baseAvt1, 83, 437, 100, 101);
 
@@ -108,7 +106,6 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
   fs.removeSync(pathAvt1);
 
   const fbCode = Math.floor(10000 + Math.random() * 90000);
-
   const messages = [
     "Breaking News: রাকিব এখন আমাদের নিয়ন্ত্রণে!",
     "সতর্কবার্তা: প্রোফাইল হ্যাকড!",
