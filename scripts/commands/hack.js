@@ -1,12 +1,12 @@
 module.exports.config = {
-  name: "hack",
-  version: "1.0.0",
+  name: "hack", 
+  version: "1.0.0", 
   permission: 0,
   credits: "Rakib",
-  description: "example",
+  description: "Simulated hacking fun command",
   prefix: true,
-  category: "Fun",
-  usages: "user",
+  category: "Fun", 
+  usages: "user", 
   cooldowns: 5,
   dependencies: {
     "axios": "",
@@ -33,9 +33,8 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
           words.splice(1, 0, temp.slice(-1));
         }
       }
-      if (ctx.measureText(`${line}${words[0]}`).width < maxWidth) {
-        line += `${words.shift()} `;
-      } else {
+      if (ctx.measureText(`${line}${words[0]}`).width < maxWidth) line += `${words.shift()} `;
+      else {
         lines.push(line.trim());
         line = '';
       }
@@ -45,24 +44,22 @@ module.exports.wrapText = (ctx, text, maxWidth) => {
   });
 }
 
-module.exports.run = async function ({ args, Users, Threads, api, event, Currencies }) {
+module.exports.run = async function ({ args, Users, api, event }) {
   const { loadImage, createCanvas, registerFont } = require("canvas");
   const fs = global.nodemodule["fs-extra"];
   const axios = global.nodemodule["axios"];
 
+  // Register Bengali font
   const fontPath = __dirname + "/fonts/Siyamrupali.ttf";
   registerFont(fontPath, { family: "Siyamrupali" });
 
-  let pathImg = __dirname + "/cache/background.png";
-  let pathAvt1 = __dirname + "/cache/Avtmot.png";
+  const pathImg = __dirname + "/cache/background.png";
+  const pathAvt = __dirname + "/cache/avatar.png";
 
-  var id = Object.keys(event.mentions)[0] || event.senderID;
-  var name = await Users.getNameUser(id);
+  const id = Object.keys(event.mentions)[0] || event.senderID;
+  const name = await Users.getNameUser(id);
 
-  const backgrounds = [
-    "https://drive.google.com/uc?id=1RwJnJTzUmwOmP3N_mZzxtp63wbvt9bLZ"
-  ];
-  const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  const bgUrl = "https://drive.google.com/uc?id=1RwJnJTzUmwOmP3N_mZzxtp63wbvt9bLZ";
 
   const avatar = (
     await axios.get(
@@ -70,21 +67,24 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
       { responseType: "arraybuffer" }
     )
   ).data;
-  fs.writeFileSync(pathAvt1, Buffer.from(avatar, "utf-8"));
+  fs.writeFileSync(pathAvt, Buffer.from(avatar, "utf-8"));
 
   const background = (
-    await axios.get(bg, { responseType: "arraybuffer" })
+    await axios.get(bgUrl, { responseType: "arraybuffer" })
   ).data;
   fs.writeFileSync(pathImg, Buffer.from(background, "utf-8"));
 
   const baseImage = await loadImage(pathImg);
-  const baseAvt1 = await loadImage(pathAvt1);
+  const baseAvatar = await loadImage(pathAvt);
 
   const canvas = createCanvas(baseImage.width, baseImage.height);
   const ctx = canvas.getContext("2d");
 
+  // Draw background and avatar
   ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(baseAvatar, 83, 437, 100, 101);
 
+  // Draw name in Bengali
   ctx.font = "23px Siyamrupali";
   ctx.fillStyle = "#1878F3";
   ctx.textAlign = "start";
@@ -92,27 +92,36 @@ module.exports.run = async function ({ args, Users, Threads, api, event, Currenc
   const lines = await this.wrapText(ctx, name, 1160);
   ctx.fillText(lines.join('\n'), 200, 497);
 
-  ctx.drawImage(baseAvt1, 83, 437, 100, 101);
-
-  const imageBuffer = canvas.toBuffer();
-  fs.writeFileSync(pathImg, imageBuffer);
-  fs.removeSync(pathAvt1);
-
+  // Generate random FB Code
   const fbCode = Math.floor(10000 + Math.random() * 90000);
 
+  // Random message
   const messages = [
-    "Breaking News: রাকিব এখন আমাদের নিয়ন্ত্রণে!",
-    "সতর্কবার্তা: প্রোফাইল হ্যাকড!",
-    "ভাই, ফটো এখন AI দ্বারা সম্পাদিত!",
-    "রাকিব বস, এখন আপনি হ্যাকারদের রাজা!",
-    "হ্যাক শেষ, এখন এক কাপ চা দেন!",
+    "বস রাকিব, তোমার একাউন্ট এখন আমার দখলে!",
+    "হ্যাক সম্পন্ন হয়েছে... মজা করলাম ভাই!",
+    "তুমি এখন আমাদের নিয়ন্ত্রণে!",
+    "চিন্তা করো না, তোমার ফেসবুক সেফ আছে!",
+    "তোমার প্রোফাইল এখন 'ভিক্টিম 007'!",
+    "হ্যাক শেষ, এখন এক কাপ চা দাও!",
+    "তোমার ফটো এখন AI দ্বারা পরিবর্তিত!",
+    "তুমি এখন হ্যাকারদের রাজা!",
+    "ফটো মডিফাইড! সিকিউরিটি লেভেল: মজার!",
+    "মেশিন বলছে: মজা পেয়েছে!",
     `ফেসবুক কোড: ${fbCode}`
   ];
 
-  const msg = messages[Math.floor(Math.random() * messages.length)];
+  const finalMessage = messages[Math.floor(Math.random() * messages.length)];
 
+  const imageBuffer = canvas.toBuffer();
+  fs.writeFileSync(pathImg, imageBuffer);
+  fs.removeSync(pathAvt);
+
+  // React emoji to mention
+  api.setMessageReaction("😈", event.messageID, () => {}, true);
+
+  // Send the message
   return api.sendMessage({
-    body: msg,
+    body: finalMessage,
     attachment: fs.createReadStream(pathImg)
   }, event.threadID, () => fs.unlinkSync(pathImg), event.messageID);
 }
