@@ -26,13 +26,22 @@ module.exports.run = async function({ event, api, Threads, Users }) {
   const { setData, getData } = Threads;
   const fs = require("fs");
   const iconPath = __dirname + "/cache/emoji.json";
-  const moduleName = module.exports.config.name;
-
   if (!fs.existsSync(iconPath)) fs.writeFileSync(iconPath, JSON.stringify({}));
   if (author === threadID) return;
 
   try {
-    let dataThread = (await getData(threadID)).threadInfo;
+    let thread = await Threads.getData(threadID);
+    if (!thread || !thread.threadInfo) {
+      thread = {
+        threadInfo: {
+          adminIDs: [],
+          nicknames: {},
+          threadIcon: "👍",
+          threadColor: "🌤"
+        }
+      };
+    }
+    let dataThread = thread.threadInfo;
 
     switch (logMessageType) {
       case "log:thread-admins": {
@@ -59,12 +68,12 @@ module.exports.run = async function({ event, api, Threads, Users }) {
       case "log:thread-icon": {
         const preIcon = JSON.parse(fs.readFileSync(iconPath));
         dataThread.threadIcon = logMessageData.thread_icon || "👍";
-        if (global.configModule[moduleName].sendNoti) {
+        if (global.configModule[this.config.name].sendNoti) {
           api.sendMessage(`[ GROUP UPDATE ]\n❯ ${logMessageBody.replace("emoji", "icon")}\n❯ Original Emoji: ${preIcon[threadID] || "unknown"}`, threadID, async (error, info) => {
             preIcon[threadID] = dataThread.threadIcon;
             fs.writeFileSync(iconPath, JSON.stringify(preIcon));
-            if (global.configModule[moduleName].autoUnsend) {
-              await new Promise(resolve => setTimeout(resolve, global.configModule[moduleName].timeToUnsend * 1000));
+            if (global.configModule[this.config.name].autoUnsend) {
+              await new Promise(resolve => setTimeout(resolve, global.configModule[this.config.name].timeToUnsend * 1000));
               return api.unsendMessage(info.messageID);
             }
           });
@@ -93,7 +102,7 @@ module.exports.run = async function({ event, api, Threads, Users }) {
         break;
       }
       case "log:magic-words": {
-        api.sendMessage(`» [ GROUP UPDATE ] Theme ${logMessageData.magic_word} added effect: ${logMessageData.theme_name}\nEmoij: ${logMessageData.emoji_effect || "No emoji "}\nTotal ${logMessageData.new_magic_word_count} word effect added`, threadID)
+        api.sendMessage(`» [ GROUP UPDATE ] Theme ${logMessageData.magic_word} added effect: ${logMessageData.theme_name}\nEmoji: ${logMessageData.emoji_effect || "No emoji "}\nTotal ${logMessageData.new_magic_word_count} word effect added`, threadID);
         break;
       }
       case "log:thread-poll": {
@@ -109,10 +118,10 @@ module.exports.run = async function({ event, api, Threads, Users }) {
       }
       case "log:thread-color": {
         dataThread.threadColor = logMessageData.thread_color || "🌤";
-        if (global.configModule[moduleName].sendNoti) {
+        if (global.configModule[this.config.name].sendNoti) {
           api.sendMessage(`[ GROUP UPDATE ]\n❯ ${logMessageBody.replace("Theme", "color")}`, threadID, async (error, info) => {
-            if (global.configModule[moduleName].autoUnsend) {
-              await new Promise(resolve => setTimeout(resolve, global.configModule[moduleName].timeToUnsend * 1000));
+            if (global.configModule[this.config.name].autoUnsend) {
+              await new Promise(resolve => setTimeout(resolve, global.configModule[this.config.name].timeToUnsend * 1000));
               return api.unsendMessage(info.messageID);
             }
           });
@@ -123,6 +132,6 @@ module.exports.run = async function({ event, api, Threads, Users }) {
 
     await setData(threadID, { threadInfo: dataThread });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
