@@ -38,7 +38,7 @@
         "lyrics-finder": "^21.7.0",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.41",
-        "nayan-videos-downloader": "^0.1.5",
+        "nayan-videos-downloaders": "^0.1.5",
         "mqtt": "latest",
         "node-cron": "^3.0.2",
         "node-fetch": "^3.3.1",
