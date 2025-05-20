@@ -1,4 +1,4 @@
- name: Rakib-Bot
+name: Rakib-Bot
  
 on:
   push:
