@@ -38,7 +38,7 @@ handleEvent: async ({ api, event, Threads }) => {
   const reactions = ["💀", "🙄", "🤭","🥺","😶","😝","👿","🤓","🥶","🗿","😾","🤪","🤬","🤫","😼","😶‍🌫️","😎","🤦","💅","👀","☠️","🧠","👺","🤡","🤒","🤧","😫","😇","🥳","😭"];
   var Rakib = reactions[Math.floor(Math.random() * reactions.length)];
  
-  api.setMessageReaction(Rakib, event.messageID, (err) => {
+  Rakib, event.messageID, (err) => {
     if (err) {
       console.error("Error sending reaction:", err);
     }
@@ -52,12 +52,12 @@ start: async ({ Rakib, events, args, lang }) => {
      const logger = require("../../Rakib/catalogs/Rakibc.js");
      if (args[0] == 'on') {
        fs.writeFileSync(pathFile, 'true');
-       Rakib.sendMessage(lang("on"), events.threadID, events.messageID);
+       nayan.sendMessage(lang("on"), events.threadID, events.messageID);
      } else if (args[0] == 'off') {
        fs.writeFileSync(pathFile, 'false');
-       Rakib.sendMessage(lang("off"), events.threadID, events.messageID);
+       nayan.sendMessage(lang("off"), events.threadID, events.messageID);
      } else {
-       Rakib.sendMessage(lang("error"), events.threadID, events.messageID);
+       nayan.sendMessage(lang("error"), events.threadID, events.messageID);
      }
    }
    catch(e) {
