@@ -5,10 +5,10 @@ const request = require("request");
 const { loadImage, createCanvas, registerFont } = require("canvas");
 
 module.exports.config = {
-  name: "uptime",
+  name: "up",
   version: "1.0.0",
   permission: 0,
-  prefix: false,
+  prefix: 'awto',
   credits: "Rakib Mahmud",
   description: "Bot uptime info triggered by keyword 'গড'",
   category: "info",
