@@ -1,9 +1,9 @@
 module.exports.config = {
     name: "bot",
-    version: "1.0.0",
+    version: "1.0.1",
     hasPermssion: 0,
-    credits: "Rakib",
-    description: "better than all Sim simi",
+    credits: "Rakib - Modified by ChatGPT",
+    description: "better than all Sim simi with reply handling",
     usePrefix: true,
     prefix: "awto",
     category: "user",
@@ -13,13 +13,20 @@ module.exports.config = {
 
 module.exports.run = async function({ api, event, args, Users }) {
     const axios = require("axios");
-    const prompt = args.join(" ");
     const id = event.senderID;
-    const name = await Users.getNameUser(event.senderID);
+    const name = await Users.getNameUser(id);
+
+    let prompt = args.join(" ");
+
+    // যদি reply মেসেজে কিছু থাকে, সেটা ধরো
+    if (!prompt && event.type === "message_reply") {
+        prompt = event.messageReply.body;
+    }
 
     const tl = ["🙈💋"];
     const rand = tl[Math.floor(Math.random() * tl.length)];
 
+    // কিছুই না থাকলে random রিঅ্যাকশন দাও
     if (!prompt) return api.sendMessage(`${name}\n${rand}`, event.threadID, event.messageID);
 
     try {
