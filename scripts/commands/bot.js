@@ -1,9 +1,9 @@
 module.exports.config = {
     name: "bot",
-    version: "1.0.1",
+    version: "1.0.2",
     hasPermssion: 0,
-    credits: "Rakib - Modified by ChatGPT",
-    description: "better than all Sim simi with reply handling",
+    credits: "Rakib - fixed by ChatGPT",
+    description: "Chatbot with reply support",
     usePrefix: true,
     prefix: "awto",
     category: "user",
@@ -18,15 +18,14 @@ module.exports.run = async function({ api, event, args, Users }) {
 
     let prompt = args.join(" ");
 
-    // যদি reply মেসেজে কিছু থাকে, সেটা ধরো
-    if (!prompt && event.type === "message_reply") {
+    // যদি reply করা হয়, সেটা ব্যবহার করো
+    if (!prompt && event.type === "message_reply" && event.messageReply.body) {
         prompt = event.messageReply.body;
     }
 
     const tl = ["🙈💋"];
     const rand = tl[Math.floor(Math.random() * tl.length)];
 
-    // কিছুই না থাকলে random রিঅ্যাকশন দাও
     if (!prompt) return api.sendMessage(`${name}\n${rand}`, event.threadID, event.messageID);
 
     try {
